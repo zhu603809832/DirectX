@@ -44,18 +44,28 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_DIRECTXTUTORIAL));
 
-    MSG msg;
+    MSG msg = {0};
 
     // 主消息循环:
-    while (GetMessage(&msg, nullptr, 0, 0))
+    while (TRUE)
     {
-        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+        if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
         {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
+			// translate keystroke messages into the right format
+			TranslateMessage(&msg);
+
+			// send the message to the WindowProc function
+			DispatchMessage(&msg);
+
+			// check to see if it's time to quit
+			if (msg.message == WM_QUIT)
+				break;
+        }
+        else
+        {
+			// Run game code here
         }
     }
-
     return (int) msg.wParam;
 }
 
@@ -88,6 +98,14 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     return RegisterClassExW(&wcex);
 }
 
+BOOL AdjustWindowRect(LPRECT lpRect, DWORD dwStyle, BOOL bMenu)
+{
+	BOOL bResult = FALSE;
+
+	bResult = TRUE;
+
+	return bResult;
+}
 //
 //   函数: InitInstance(HINSTANCE, int)
 //
@@ -102,9 +120,18 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // 将实例句柄存储在全局变量中
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+   RECT wr = { 0, 0, 1366, 768};    // set the size, but not the position
+   AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE);    // adjust the size
+   
+   INT nPosX = 0;
+   INT nPosY = 0;
+   INT nWindowWidth = wr.right - wr.left;
+   INT nWindowHeight = wr.bottom - wr.top;
 
+   /*HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);*/
+
+   HWND hWnd = CreateWindowEx(NULL, szWindowClass, szTitle, WS_OVERLAPPEDWINDOW, nPosX, nPosY, nWindowHeight, nWindowHeight, nullptr, nullptr, hInstance, nullptr);
    if (!hWnd)
    {
       return FALSE;
