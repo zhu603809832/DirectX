@@ -10,14 +10,26 @@
 #define SCREEN_HEIGHT 600
 
 // 全局变量:
-HINSTANCE g_hInst;                                // 当前实例
-HWND    g_hMainWindowWnd;
-WCHAR g_szTitle[MAX_LOADSTRING];                  // 标题栏文本
-WCHAR g_szWindowClass[MAX_LOADSTRING];            // 主窗口类名
-IDXGISwapChain* g_SwapChain;
-ID3D11Device* g_Device;
-ID3D11DeviceContext* g_DeviceContext;
-ID3D11RenderTargetView* g_RenderTargetView;
+HINSTANCE                   g_hInst;                                // 当前实例
+HWND                        g_hMainWindowWnd;
+WCHAR                       g_szTitle[MAX_LOADSTRING];                  // 标题栏文本
+WCHAR                       g_szWindowClass[MAX_LOADSTRING];            // 主窗口类名
+
+IDXGISwapChain*             g_SwapChain;
+ID3D11Device*               g_Device;
+ID3D11DeviceContext*        g_DeviceContext;
+ID3D11RenderTargetView*     g_RenderTargetView;
+ID3D11VertexShader*         g_pVertexShader;
+ID3D11PixelShader*          g_pPixelShader;
+
+ID3D11Buffer*               g_pVertexBuffer;
+ID3D11InputLayout*			g_pLayout;
+
+struct VERTEX
+{
+    FLOAT x, y, z;
+    D3DXCOLOR Color;
+};
 
 // 此代码模块中包含的函数的前向声明:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -27,6 +39,8 @@ INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 BOOL                InitD3D(HWND hWnd);
 BOOL                CleanD3D(void);
 BOOL                RenderFrame();
+BOOL                InitPipeline();
+BOOL                InitGraphics();
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -285,6 +299,9 @@ BOOL InitD3D(HWND hWnd)
 
 	 g_DeviceContext->RSSetViewports(1, &viewport);
 
+	 bResult = InitPipeline();
+	 bResult = InitGraphics();
+
 	bResult = TRUE;
 Exit0:
     if (pBackBuffer)
@@ -300,20 +317,26 @@ BOOL CleanD3D(void)
 	BOOL bResult = FALSE;
     
 	// close and release all existing COM objects
+    if (g_pVertexShader)
+        g_pVertexShader->Release();
+
+    if (g_pPixelShader)
+        g_pPixelShader->Release();
+
     if (g_SwapChain)
     {
 		g_SwapChain->SetFullscreenState(FALSE, NULL);    // switch to windowed mode
 		g_SwapChain->Release();
     }
 
+	if (g_RenderTargetView)
+		g_RenderTargetView->Release();
+
     if (g_Device)
         g_Device->Release();
 
     if (g_DeviceContext)
         g_DeviceContext->Release();
-
-    if (g_RenderTargetView)
-        g_RenderTargetView->Release();
 
 	bResult = TRUE;
 
@@ -329,6 +352,16 @@ BOOL RenderFrame()
 	    g_DeviceContext->ClearRenderTargetView(g_RenderTargetView, D3DXCOLOR(0.0f, 0.2f, 0.4f, 1.0f));
 
 	// do 3D rendering on the back buffer here
+	// select which vertex buffer to display
+	UINT stride = sizeof(VERTEX);
+	UINT offset = 0;
+	g_DeviceContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
+
+	// select which primtive type we are using
+	g_DeviceContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	// draw the vertex buffer to the back buffer
+	g_DeviceContext->Draw(3, 0);
 
 	// switch the back buffer and the front buffer
     if (g_SwapChain)
@@ -336,5 +369,112 @@ BOOL RenderFrame()
 
 	bResult = TRUE;
 //Exit0:
+	return bResult;
+}
+
+BOOL InitPipeline()
+{
+	BOOL bResult = FALSE;
+	HRESULT hrResult = E_FAIL;
+
+    ID3D10Blob* pVertexBlob = NULL;
+    ID3D10Blob* pPixelBlob = NULL;
+
+	// create the input layout object
+	D3D11_INPUT_ELEMENT_DESC inputElementDesc[] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
+
+    hrResult = D3DX10CompileFromFile(L"shaders.shader", 0, 0, "VShader", "vs_4_0", 0, 0, 0, &pVertexBlob, 0, 0);
+	if (FAILED(hrResult))
+	{
+		TCHAR szMessage[260];
+		_sntprintf_s(szMessage, 260, 260, _T("D3DX10CompileFromFile VShader Fail %u"), hrResult);
+		MessageBox(0, szMessage, 0, 0);
+		goto Exit0;
+	}
+    hrResult = D3DX10CompileFromFile(L"shaders.shader", 0, 0, "PShader", "ps_4_0", 0, 0, 0, &pPixelBlob, 0, 0);
+	if (FAILED(hrResult))
+	{
+		TCHAR szMessage[260];
+		_sntprintf_s(szMessage, 260, 260, _T("D3DX10CompileFromFile PShader Fail %u"), hrResult);
+		MessageBox(0, szMessage, 0, 0);
+		goto Exit0;
+	}
+	// encapsulate both shaders into shader objects
+    hrResult = g_Device->CreateVertexShader(pVertexBlob->GetBufferPointer(), pVertexBlob->GetBufferSize(), NULL, &g_pVertexShader);
+	if (FAILED(hrResult))
+	{
+		TCHAR szMessage[260];
+		_sntprintf_s(szMessage, 260, 260, _T("CreateVertexShader Fail %u"), hrResult);
+		MessageBox(0, szMessage, 0, 0);
+		goto Exit0;
+	}
+
+    hrResult = g_Device->CreatePixelShader(pPixelBlob->GetBufferPointer(), pPixelBlob->GetBufferSize(), NULL, &g_pPixelShader);
+	if (FAILED(hrResult))
+	{
+		TCHAR szMessage[260];
+		_sntprintf_s(szMessage, 260, 260, _T("CreatePixelShader Fail %u"), hrResult);
+		MessageBox(0, szMessage, 0, 0);
+		goto Exit0;
+	}
+
+    g_DeviceContext->VSSetShader(g_pVertexShader, 0, 0);
+    g_DeviceContext->PSSetShader(g_pPixelShader, 0, 0);
+
+	hrResult = g_Device->CreateInputLayout(inputElementDesc, 2, pVertexBlob->GetBufferPointer(), pVertexBlob->GetBufferSize(), &g_pLayout);
+	if (FAILED(hrResult))
+	{
+		TCHAR szMessage[260];
+		_sntprintf_s(szMessage, 260, 260, _T("CreateInputLayout Fail %u"), hrResult);
+		MessageBox(0, szMessage, 0, 0);
+		goto Exit0;
+	}
+	g_DeviceContext->IASetInputLayout(g_pLayout);
+
+	bResult = TRUE;
+Exit0:
+	return bResult;
+}
+
+BOOL InitGraphics()
+{
+	BOOL bResult = FALSE;
+	HRESULT hrResult = E_FAIL;
+
+	VERTEX OurVertices[] =
+	{
+		{0.0f, 0.5f, 0.0f, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f)},
+		{0.45f, -0.5, 0.0f, D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f)},
+		{-0.45f, -0.5f, 0.0f, D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f)}
+	};
+
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+
+	bd.Usage = D3D11_USAGE_DYNAMIC;                // write access access by CPU and GPU
+	bd.ByteWidth = sizeof(VERTEX) * 3;             // size is the VERTEX struct * 3
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;       // use as a vertex buffer
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;    // allow CPU to write in buffer
+
+    hrResult = g_Device->CreateBuffer(&bd, NULL, &g_pVertexBuffer);       // create the buffer
+	if (FAILED(hrResult))
+	{
+		TCHAR szMessage[260];
+		_sntprintf_s(szMessage, 260, 260, _T("CreateBuffer Fail %u"), hrResult);
+		MessageBox(0, szMessage, 0, 0);
+		goto Exit0;
+	}
+
+	D3D11_MAPPED_SUBRESOURCE ms;
+	g_DeviceContext->Map(g_pVertexBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);   // map the buffer
+	memcpy(ms.pData, OurVertices, sizeof(OurVertices));                // copy the data
+	g_DeviceContext->Unmap(g_pVertexBuffer, NULL);
+
+	bResult = TRUE;
+Exit0:
 	return bResult;
 }
