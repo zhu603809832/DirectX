@@ -27,9 +27,15 @@
     <ClInclude Include="DirectxTutorial.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MainClass.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectxTutorial.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MainClass.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

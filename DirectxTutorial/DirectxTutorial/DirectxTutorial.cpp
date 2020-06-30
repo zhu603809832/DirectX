@@ -3,6 +3,7 @@
 
 #include "framework.h"
 #include "DirectxTutorial.h"
+#include "MainClass.h"
 
 #define MAX_LOADSTRING 100
 // define the screen resolution
@@ -42,63 +43,88 @@ BOOL                RenderFrame();
 BOOL                InitPipeline();
 BOOL                InitGraphics();
 
+//int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
+//                     _In_opt_ HINSTANCE hPrevInstance,
+//                     _In_ LPWSTR    lpCmdLine,
+//                     _In_ int       nCmdShow)
+//{
+//    UNREFERENCED_PARAMETER(hPrevInstance);
+//    UNREFERENCED_PARAMETER(lpCmdLine);
+//
+//    // TODO: 在此处放置代码。
+//
+//    // 初始化全局字符串
+//    LoadStringW(hInstance, IDS_APP_TITLE, g_szTitle, MAX_LOADSTRING);
+//    LoadStringW(hInstance, IDC_DIRECTXTUTORIAL, g_szWindowClass, MAX_LOADSTRING);
+//    MyRegisterClass(hInstance);
+//
+//    // 执行应用程序初始化:
+//    if (!InitInstance (hInstance, nCmdShow))
+//    {
+//        return FALSE;
+//    }
+//
+//    if (!InitD3D(g_hMainWindowWnd))
+//    {
+//        return FALSE;
+//    }
+//	//MessageBox(NULL,
+//	//	L"Hello World!",
+//	//	L"Just another Hello World program!",
+//	//	MB_ICONEXCLAMATION | MB_OK);
+//
+//    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_DIRECTXTUTORIAL));
+//
+//    MSG msg = {0};
+//
+//    // 主消息循环:
+//    while (TRUE)
+//    {
+//        if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+//        {
+//			// translate keystroke messages into the right format
+//			TranslateMessage(&msg);
+//
+//			// send the message to the WindowProc function
+//			DispatchMessage(&msg);
+//
+//			// check to see if it's time to quit
+//			if (msg.message == WM_QUIT)
+//				break;
+//        }
+//        RenderFrame();
+//    }
+//
+//    CleanD3D();
+//    return (int) msg.wParam;
+//}
+
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPWSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
+	_In_opt_ HINSTANCE hPrevInstance,
+	_In_ LPWSTR    lpCmdLine,
+	_In_ int       nCmdShow)
 {
-    UNREFERENCED_PARAMETER(hPrevInstance);
-    UNREFERENCED_PARAMETER(lpCmdLine);
+	UNREFERENCED_PARAMETER(hPrevInstance);
+	UNREFERENCED_PARAMETER(lpCmdLine);
 
-    // TODO: 在此处放置代码。
+	// TODO: 在此处放置代码。
+	int nRetCode = 0;
+	HRESULT hrResult = E_FAIL;
+	MainClass mainClass;
+	hrResult = mainClass.Init(hInstance, nCmdShow);
+	if (FAILED(hrResult))
+	{
+		TCHAR szMessage[260];
+			_sntprintf_s(szMessage, 260, 260, _T("MainClass Fail %u"), hrResult);
+			MessageBox(0, szMessage, 0, 0);
+			goto Exit0;
+	}
+	nRetCode = mainClass.Run();
 
-    // 初始化全局字符串
-    LoadStringW(hInstance, IDS_APP_TITLE, g_szTitle, MAX_LOADSTRING);
-    LoadStringW(hInstance, IDC_DIRECTXTUTORIAL, g_szWindowClass, MAX_LOADSTRING);
-    MyRegisterClass(hInstance);
-
-    // 执行应用程序初始化:
-    if (!InitInstance (hInstance, nCmdShow))
-    {
-        return FALSE;
-    }
-
-    if (!InitD3D(g_hMainWindowWnd))
-    {
-        return FALSE;
-    }
-	//MessageBox(NULL,
-	//	L"Hello World!",
-	//	L"Just another Hello World program!",
-	//	MB_ICONEXCLAMATION | MB_OK);
-
-    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_DIRECTXTUTORIAL));
-
-    MSG msg = {0};
-
-    // 主消息循环:
-    while (TRUE)
-    {
-        if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-        {
-			// translate keystroke messages into the right format
-			TranslateMessage(&msg);
-
-			// send the message to the WindowProc function
-			DispatchMessage(&msg);
-
-			// check to see if it's time to quit
-			if (msg.message == WM_QUIT)
-				break;
-        }
-        RenderFrame();
-    }
-
-    CleanD3D();
-    return (int) msg.wParam;
+Exit0:
+	mainClass.UnInit();
+	return nRetCode;
 }
-
-
 
 //
 //  函数: MyRegisterClass()
@@ -386,8 +412,8 @@ BOOL InitPipeline()
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
-
-    hrResult = D3DX10CompileFromFile(L"shaders.shader", 0, 0, "VShader", "vs_4_0", 0, 0, 0, &pVertexBlob, 0, 0);
+	
+    hrResult = D3DX11CompileFromFile(L"shaders.shader", 0, 0, "VShader", "vs_4_0", 0, 0, 0, &pVertexBlob, 0, 0);
 	if (FAILED(hrResult))
 	{
 		TCHAR szMessage[260];
@@ -395,7 +421,7 @@ BOOL InitPipeline()
 		MessageBox(0, szMessage, 0, 0);
 		goto Exit0;
 	}
-    hrResult = D3DX10CompileFromFile(L"shaders.shader", 0, 0, "PShader", "ps_4_0", 0, 0, 0, &pPixelBlob, 0, 0);
+    hrResult = D3DX11CompileFromFile(L"shaders.shader", 0, 0, "PShader", "ps_4_0", 0, 0, 0, &pPixelBlob, 0, 0);
 	if (FAILED(hrResult))
 	{
 		TCHAR szMessage[260];
