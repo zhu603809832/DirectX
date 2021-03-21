@@ -21,9 +21,39 @@
     <ClCompile Include="DxApp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="GameApplication.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DXUtil.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="dxerr.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="IElement2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DxApp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApplication.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DXUtil.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="dxerr.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="IElement2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
