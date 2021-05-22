@@ -122,6 +122,10 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y $(ProjectDir)shader\color.vs $(SolutionDir)$(Platform)\$(Configuration)\
+xcopy /Y $(ProjectDir)shader\color.ps $(SolutionDir)$(Platform)\$(Configuration)\</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -140,18 +144,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Cameraclass.cpp" />
+    <ClCompile Include="Colorshaderclass.cpp" />
     <ClCompile Include="D3dClass.cpp" />
-    <ClCompile Include="DirextX11Tutorial.cpp" />
     <ClCompile Include="Graphicsclass.cpp" />
     <ClCompile Include="InputClass.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ModelClass.cpp" />
     <ClCompile Include="Systemclass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Cameraclass.h" />
+    <ClInclude Include="Colorshaderclass.h" />
     <ClInclude Include="D3dClass.h" />
     <ClInclude Include="Graphicsclass.h" />
     <ClInclude Include="InputClass.h" />
+    <ClInclude Include="ModelClass.h" />
     <ClInclude Include="Systemclass.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader\Color.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

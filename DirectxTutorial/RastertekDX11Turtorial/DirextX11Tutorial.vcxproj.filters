@@ -13,11 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{cd77a1aa-aab4-44cc-854d-44d240da0868}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DirextX11Tutorial.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -31,6 +31,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="D3dClass.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelClass.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Colorshaderclass.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Cameraclass.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,5 +56,19 @@
     <ClInclude Include="D3dClass.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ModelClass.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Colorshaderclass.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Cameraclass.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader\Color.vs">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>
