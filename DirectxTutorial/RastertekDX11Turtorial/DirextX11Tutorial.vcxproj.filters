@@ -30,6 +30,9 @@
     <ClCompile Include="Graphicsclass.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="D3dClass.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Systemclass.h">
@@ -39,6 +42,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Graphicsclass.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="D3dClass.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

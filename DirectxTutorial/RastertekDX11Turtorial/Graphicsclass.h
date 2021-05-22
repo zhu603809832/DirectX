@@ -4,6 +4,10 @@
 #ifndef _GRAPHICSCLASS_H_
 #define _GRAPHICSCLASS_H_
 
+///////////////////////
+// MY CLASS INCLUDES //
+///////////////////////
+#include "d3dclass.h"
 
 //////////////
 // INCLUDES //
@@ -38,7 +42,7 @@ private:
 	bool Render();
 
 private:
-
+	D3DClass* m_D3D;
 };
 
 #endif

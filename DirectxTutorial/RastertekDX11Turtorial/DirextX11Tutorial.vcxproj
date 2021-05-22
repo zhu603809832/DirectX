@@ -119,7 +119,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -140,6 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="D3dClass.cpp" />
     <ClCompile Include="DirextX11Tutorial.cpp" />
     <ClCompile Include="Graphicsclass.cpp" />
     <ClCompile Include="InputClass.cpp" />
@@ -147,6 +148,7 @@
     <ClCompile Include="Systemclass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="D3dClass.h" />
     <ClInclude Include="Graphicsclass.h" />
     <ClInclude Include="InputClass.h" />
     <ClInclude Include="Systemclass.h" />
