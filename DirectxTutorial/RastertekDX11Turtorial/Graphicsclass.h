@@ -11,6 +11,8 @@
 #include "cameraclass.h"
 #include "modelclass.h"
 #include "colorshaderclass.h"
+#include "lightshaderclass.h"
+#include "lightclass.h"
 
 //////////////
 // INCLUDES //
@@ -42,7 +44,7 @@ public:
 	bool Frame();
 
 private:
-	bool Render();
+	bool Render(float);
 
 private:
 	D3DClass* m_D3D;
@@ -50,6 +52,8 @@ private:
 	ModelClass* m_Model;
 	ColorShaderClass* m_ColorShader;//1
 	TextureShaderClass* m_TextureShader;
+	LightShaderClass* m_LightShader;
+	LightClass* m_Light;
 };
 
 #endif
