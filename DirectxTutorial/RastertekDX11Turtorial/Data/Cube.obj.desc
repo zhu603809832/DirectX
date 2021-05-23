@@ -1,0 +1,16 @@
+This particular .OBJ model file represents a 3D cube. It has 8 vertices, 24 texture coordinates and normal vectors, and 6 sides made up of 12 faces in total. When examining the file you can ignore every line unless it starts with a "V", "VT", "VN", or "F". The extra information in the file will not be needed for converting .obj to our file format. Lets look at what each of the important lines means:
+
+1. The "V" lines are for the vertices. The cube is made up of 8 vertices for the eight corners of the cube. Each is listed in X, Y, Z float format.
+
+2. The "VT" lines are for the texture coordinates. The cube is has 24 texture coordinates and most of them are duplicated since it records them for every vertex in every triangle in the cube model. They are listed in TU, TV float format.
+
+3. The "VN" lines are for the normal vectors. The cube is has 24 normal vectors and most of them are duplicated again since it records them for every vertex in every triangle in the cube model. They are listed in NX, NY, NZ float format.
+
+4. The "F" lines are for each triangle (face) in the cube model. The values listed are indexes into the vertices, texture coordinates, and normal vectors. The format of each face is:
+
+f Vertex1/Texture1/Normal1 Vertex2/Texture2/Normal2 Vertex3/Texture3/Normal3
+So a line that says "f 3/13/5 4/14/6 5/15/7" then translates to "Vertex3/Texture13/Normal5 Vertex4/Texture14/Normal6 Vertex5/Texture15/Normal7".
+
+The order the data is listed in the .obj file is very important. For example the first vertex in the file corresponds to Vertex1 in the face list. This is the same for texture coordinates and normals as well.
+
+Looking at the face lines in the .obj file notice that the three index groups per line make an individual triangle. And in the case of this cube model the 12 total faces make up the 6 sides of the cube that has 2 triangles per side.
