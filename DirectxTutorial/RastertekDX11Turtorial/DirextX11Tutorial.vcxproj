@@ -123,8 +123,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y $(ProjectDir)shader\color.vs $(SolutionDir)$(Platform)\$(Configuration)\
-xcopy /Y $(ProjectDir)shader\color.ps $(SolutionDir)$(Platform)\$(Configuration)\</Command>
+      <Command>xcopy /Y $(ProjectDir)shader\* $(SolutionDir)$(Platform)\$(Configuration)\shader</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -152,6 +151,8 @@ xcopy /Y $(ProjectDir)shader\color.ps $(SolutionDir)$(Platform)\$(Configuration)
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ModelClass.cpp" />
     <ClCompile Include="Systemclass.cpp" />
+    <ClCompile Include="TextureClass.cpp" />
+    <ClCompile Include="Textureshaderclass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cameraclass.h" />
@@ -161,9 +162,8 @@ xcopy /Y $(ProjectDir)shader\color.ps $(SolutionDir)$(Platform)\$(Configuration)
     <ClInclude Include="InputClass.h" />
     <ClInclude Include="ModelClass.h" />
     <ClInclude Include="Systemclass.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Shader\Color.vs" />
+    <ClInclude Include="TextureClass.h" />
+    <ClInclude Include="Textureshaderclass.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

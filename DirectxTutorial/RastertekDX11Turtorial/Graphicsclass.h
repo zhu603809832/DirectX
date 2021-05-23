@@ -17,7 +17,7 @@
 //////////////
 #include <windows.h>
 
-
+#include "textureshaderclass.h"
 /////////////
 // GLOBALS //
 /////////////
@@ -48,7 +48,8 @@ private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
 	ModelClass* m_Model;
-	ColorShaderClass* m_ColorShader;
+	ColorShaderClass* m_ColorShader;//1
+	TextureShaderClass* m_TextureShader;
 };
 
 #endif
