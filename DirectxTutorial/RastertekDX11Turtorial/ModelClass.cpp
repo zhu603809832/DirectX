@@ -8,6 +8,7 @@ ModelClass::ModelClass()
 	m_vertexBuffer = 0;
 	m_indexBuffer = 0;
 	m_Texture = 0;
+	m_model = 0;
 }
 
 
@@ -20,10 +21,16 @@ ModelClass::~ModelClass()
 {
 }
 
-bool ModelClass::Initialize(ID3D11Device* device, const WCHAR* textureFilename)
+bool ModelClass::Initialize(ID3D11Device* device, const char* modelFilename, const WCHAR* textureFilename)
 {
 	bool result;
 
+	// Load in the model data,
+	result = LoadModel(modelFilename);
+	if (!result)
+	{
+		return false;
+	}
 
 	// Initialize the vertex and index buffer that hold the geometry for the triangle.
 	result = InitializeBuffers(device);
@@ -50,6 +57,8 @@ void ModelClass::Shutdown()
 	// Release the vertex and index buffers.
 	ShutdownBuffers();
 
+	// Release the model data.
+	ReleaseModel();
 	return;
 }
 
@@ -78,15 +87,10 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 	HRESULT result;
-	//First create two temporary arrays to hold the vertexand index data that we will use later to populate the final buffers with.
+	int i;
+	//Take note that we will no longer manually set the vertexand index count here.Once we get to the ModelClass::LoadModel function you will see that we read the vertexand index counts in at that point instead.
 
-	// Set the number of vertices in the vertex array.
-	m_vertexCount = 3;
-
-	// Set the number of indices in the index array.
-	m_indexCount = 3;
-
-	// Create the vertex array.
+		// Create the vertex array.
 	vertices = new VertexType[m_vertexCount];
 	if (!vertices)
 	{
@@ -99,29 +103,17 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	{
 		return false;
 	}
+	//Loading the vertexand index arrays has changed a bit.Instead of setting the values manually we loop through all the elements in the new m_model arrayand copy that data from there into the vertex array.The index array is easy to build as each vertex we load has the same index number as the position in the array it was loaded into.
 
-	//Now fill both the vertexand index array with the three points of the triangle as well as the index to each of the points.Please note that I create the points in the clockwise order of drawing them.If you do this counter clockwise it will think the triangle is facing the opposite direction and not draw it due to back face culling.Always remember that the order in which you send your vertices to the GPU is very important.The color is set here as well since it is part of the vertex description.I set the color to green.
+		// Load the vertex array and index array with data.
+	for (i = 0; i < m_vertexCount; i++)
+	{
+		vertices[i].position = D3DXVECTOR3(m_model[i].x, m_model[i].y, m_model[i].z);
+		vertices[i].texture = D3DXVECTOR2(m_model[i].tu, m_model[i].tv);
+		vertices[i].normal = D3DXVECTOR3(m_model[i].nx, m_model[i].ny, m_model[i].nz);
 
-	// Load the vertex array with data.
-	vertices[0].position = D3DXVECTOR3(-1.0f, -1.0f, 0.0f);  // Bottom left.
-	//vertices[0].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
-	vertices[0].texture = D3DXVECTOR2(0.0f, 1.0f);
-	vertices[0].normal = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-
-	vertices[1].position = D3DXVECTOR3(0.0f, 1.0f, 0.0f);  // Top middle.
-	//vertices[1].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
-	vertices[1].texture = D3DXVECTOR2(0.5f, 0.0f);
-	vertices[1].normal = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-
-	vertices[2].position = D3DXVECTOR3(1.0f, -1.0f, 0.0f);  // Bottom right.
-	//vertices[2].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
-	vertices[2].texture = D3DXVECTOR2(1.0f, 1.0f);
-	vertices[2].normal = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-
-	// Load the index array with data.
-	indices[0] = 0;  // Bottom left.
-	indices[1] = 1;  // Top middle.
-	indices[2] = 2;  // Bottom right.
+		indices[i] = i;
+	}
 
 	// Set up the description of the static vertex buffer.
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -249,3 +241,73 @@ void ModelClass::ReleaseTexture()
 	return;
 }
 
+bool ModelClass::LoadModel(const char* filename)
+{
+	ifstream fin;
+	char input;
+	int i;
+
+
+	// Open the model file.
+	fin.open(filename);
+
+	// If it could not open the file then exit.
+	if (fin.fail())
+	{
+		return false;
+	}
+
+	// Read up to the value of vertex count.
+	fin.get(input);
+	while (input != ':')
+	{
+		fin.get(input);
+	}
+
+	// Read in the vertex count.
+	fin >> m_vertexCount;
+
+	// Set the number of indices to be the same as the vertex count.
+	m_indexCount = m_vertexCount;
+
+	// Create the model using the vertex count that was read in.
+	m_model = new ModelType[m_vertexCount];
+	if (!m_model)
+	{
+		return false;
+	}
+
+	// Read up to the beginning of the data.
+	fin.get(input);
+	while (input != ':')
+	{
+		fin.get(input);
+	}
+	fin.get(input);
+	fin.get(input);
+
+	// Read in the vertex data.
+	for (i = 0; i < m_vertexCount; i++)
+	{
+		fin >> m_model[i].x >> m_model[i].y >> m_model[i].z;
+		fin >> m_model[i].tu >> m_model[i].tv;
+		fin >> m_model[i].nx >> m_model[i].ny >> m_model[i].nz;
+	}
+
+	// Close the model file.
+	fin.close();
+
+	return true;
+}
+//The ReleaseModel function handles deleting the model data array.
+
+void ModelClass::ReleaseModel()
+{
+	if (m_model)
+	{
+		delete[] m_model;
+		m_model = 0;
+	}
+
+	return;
+}
