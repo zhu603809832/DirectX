@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{750a612d-79c9-4d3c-9fa7-9e0aed943e66}</ProjectGuid>
-    <RootNamespace>DirextX11Tutorial</RootNamespace>
+    <ProjectGuid>{a57c2b21-2e64-4393-a126-51644e3a5ec5}</ProjectGuid>
+    <RootNamespace>ConvertModelTool</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>应用程序X64D(.exe)</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -78,9 +78,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <TargetName>$(ProjectName)X64D</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <TargetName>$(ProjectName)X64</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -116,15 +118,11 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-    <PostBuildEvent>
-      <Command>xcopy /Y $(ProjectDir)shader\* $(SolutionDir)$(Platform)\$(Configuration)\shader</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -143,31 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Cameraclass.cpp" />
-    <ClCompile Include="Colorshaderclass.cpp" />
-    <ClCompile Include="D3dClass.cpp" />
-    <ClCompile Include="Graphicsclass.cpp" />
-    <ClCompile Include="InputClass.cpp" />
-    <ClCompile Include="LightClass.cpp" />
-    <ClCompile Include="LightShaderClass.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="ModelClass.cpp" />
-    <ClCompile Include="Systemclass.cpp" />
-    <ClCompile Include="TextureClass.cpp" />
-    <ClCompile Include="Textureshaderclass.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Cameraclass.h" />
-    <ClInclude Include="Colorshaderclass.h" />
-    <ClInclude Include="D3dClass.h" />
-    <ClInclude Include="Graphicsclass.h" />
-    <ClInclude Include="InputClass.h" />
-    <ClInclude Include="LightClass.h" />
-    <ClInclude Include="LightShaderClass.h" />
-    <ClInclude Include="ModelClass.h" />
-    <ClInclude Include="Systemclass.h" />
-    <ClInclude Include="TextureClass.h" />
-    <ClInclude Include="Textureshaderclass.h" />
+    <ClCompile Include="ConvertModelTool.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
