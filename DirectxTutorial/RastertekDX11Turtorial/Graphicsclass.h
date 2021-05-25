@@ -20,6 +20,7 @@
 #include <windows.h>
 
 #include "textureshaderclass.h"
+#include "bitmapclass.h"
 /////////////
 // GLOBALS //
 /////////////
@@ -50,10 +51,11 @@ private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
 	ModelClass* m_Model;
-	ColorShaderClass* m_ColorShader;//1
+	ColorShaderClass* m_ColorShader;
 	TextureShaderClass* m_TextureShader;
 	LightShaderClass* m_LightShader;
 	LightClass* m_Light;
+	BitmapClass* m_Bitmap;
 };
 
 #endif
