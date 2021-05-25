@@ -14,6 +14,7 @@ GraphicsClass::GraphicsClass()
 	m_LightShader = 0;
 	m_Light = 0;
 	m_Bitmap = 0;
+	m_Text = 0;
 }
 
 
@@ -29,7 +30,7 @@ GraphicsClass::~GraphicsClass()
 
 bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
-
+	D3DXMATRIX baseViewMatrix;
 	bool result;
 
 	// Create the Direct3D object.
@@ -55,7 +56,10 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Set the initial position of the camera.
-	m_Camera->SetPosition(0.0f, 0.0f, -10.0f);
+	// Initialize a base view matrix with the camera for 2D user interface rendering.
+	m_Camera->SetPosition(0.0f, 0.0f, -1.0f);
+	m_Camera->Render();
+	m_Camera->GetViewMatrix(baseViewMatrix);
 
 	// Create the model object.
 	//m_Model = new ModelClass;
@@ -146,12 +150,35 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	//m_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
 	//m_Light->SetSpecularPower(32.0f);
 
+	// Create the text object.
+	m_Text = new TextClass;
+	if (!m_Text)
+	{
+		return false;
+	}
+
+	// Initialize the text object.
+	result = m_Text->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), hwnd, screenWidth, screenHeight, baseViewMatrix);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the text object.", L"Error", MB_OK);
+		return false;
+	}
+
 	return true;
 }
 
 
 void GraphicsClass::Shutdown()
 {
+	// Release the text object.
+	if (m_Text)
+	{
+		m_Text->Shutdown();
+		delete m_Text;
+		m_Text = 0;
+	}
+
 	// Release the bitmap object.
 	if (m_Bitmap)
 	{
@@ -262,6 +289,19 @@ bool GraphicsClass::Render(float fRotation)
 	// Turn off the Z buffer to begin all 2D rendering.
 	m_D3D->TurnZBufferOff();
 
+	// Turn on the alpha blending before rendering the text.
+	m_D3D->TurnOnAlphaBlending();
+
+	// Render the text strings.
+	result = m_Text->Render(m_D3D->GetDeviceContext(), worldMatrix, orthoMatrix);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Turn off alpha blending after rendering the text.
+	m_D3D->TurnOffAlphaBlending();
+
 	// Rotate the world matrix by the rotation value so that the triangle will spin.
 	//D3DXMatrixRotationY(&worldMatrix, fRotation);
 
@@ -276,11 +316,11 @@ bool GraphicsClass::Render(float fRotation)
 	}*/
 
 	// Put the bitmap vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	result = m_Bitmap->Render(m_D3D->GetDeviceContext(), 100, 100);
-	if (!result)
-	{
-		return false;
-	}
+	//result = m_Bitmap->Render(m_D3D->GetDeviceContext(), 100, 100);
+	//if (!result)
+	//{
+	//	return false;
+	//}
 
 	// Render the model using the texture shader.
 	//result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, m_Model->GetTexture());

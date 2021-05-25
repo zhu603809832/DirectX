@@ -54,6 +54,15 @@
     <ClCompile Include="BitmapClass.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="FontClass.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FontShaderClass.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TextClass.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Systemclass.h">
@@ -90,6 +99,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="BitmapClass.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FontClass.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FontShaderClass.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TextClass.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
