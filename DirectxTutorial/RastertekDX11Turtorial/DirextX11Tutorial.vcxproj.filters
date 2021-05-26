@@ -63,6 +63,9 @@
     <ClCompile Include="TextClass.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="SoundClass.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Systemclass.h">
@@ -108,6 +111,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="TextClass.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundClass.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
